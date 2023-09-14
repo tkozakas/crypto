@@ -55,14 +55,14 @@ def brute_force_affine_to_find_start(ciphertext, desired_start):
     Returns:
     - The decrypted text, a, and b values if found. Otherwise, None.
     """
-
+    results = []
     possible_a_values = coprime_list(34)
     for a in possible_a_values:
         for b in range(n):
             decrypted_text = affine_cipher(ciphertext, a, b, mode="decrypt")
             if decrypted_text.startswith(desired_start):
-                return decrypted_text, a, b
-    return None, None, None
+                results.append((decrypted_text, a, b))
+    return results
 
 
 def coprime_list(n):
@@ -80,5 +80,5 @@ def mod_inverse(a, m):
     raise ValueError(f"Modular inverse for {a} mod {m} does not exist")
 
 
-decrypted_text, found_a, found_b = brute_force_affine_to_find_start(ciphertext, text_start)
+decrypted_text = brute_force_affine_to_find_start(ciphertext, text_start)
 print(decrypted_text)
