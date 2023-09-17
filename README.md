@@ -1,2 +1,2 @@
-# kriptografija
-kriptografija ir informacijos sauga
+# Kriptografija ir informacijos sauga
+kriptografija ir informacijos sauga 5 semestras
