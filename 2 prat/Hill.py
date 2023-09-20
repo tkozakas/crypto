@@ -1,8 +1,8 @@
 from sympy import Matrix
 
-ciphertext = "BIJPC ĄGCEG ZJĖPL ĄĮDCČ ĖUTŽĮ JRĄČI OKŪBĮ JSČČI BYDCM DĖŠCČ ĖUJČK KĖHĮK ZJNPE GBVĮJ LĮŪME ŲČAKS YTĖGZ YCĄYL ŲJMPU MĮUIM BZĖUY ĄĖUTŽ ĄDRIU NĖGBA GŲĖPJ TČIHV DNDKK RZUJR ĮHUŠS PPLJT JPGĮČ IHVĮJ YŠĮHM KĖPBI JPRUC ĄRUDN OOŠIĖ ŪĖGUM ŽĄĮJJ TYŠĮH MKILĄ ŲDN"
+ciphertext = "MČKCA SĘVŠE SLŽŲB ĘMCĄČ REČFA TDŽAO ŪKUZA TĮČAO ĖBČDP ŲAĖĄČ REPČA KLDHĖ SLICŠ EĮCAT EŲGYN DŪAĮT PĘERI BASVJ BFDHŪ ZTZUY ŠMREĮ ŽREČF ZCZČĘ ĮERYK JDŽŲŪ ŽAOIŲ OPNĖB GKRŲM OVZŠĖ CYSŪŽ KCPNA OIŲAT GŠOVY AŽŲMČ KCŠRA SŠROP ĖIIOI ČERŪZ ČSATŪ ŽGŠOV YAJŽK ĮOP"
 alphabet = u'AĄBCČDEĘĖFGHIĮYJKLMNOPRSŠTUŲŪVZŽ'
-key_matrix = Matrix([[5, 10], [27, 3]])  # don't forget to inverse the matrix first https://www.dcode.fr/matrix-inverse
+key_matrix = Matrix([[27, -17], [-19, 12]])  # don't forget to inverse the matrix first https://www.dcode.fr/matrix-inverse
 
 
 def decodeHill(letters, matrix, alphabet):

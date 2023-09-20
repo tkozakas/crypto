@@ -33,9 +33,9 @@ def bifid_decrypt(ciphertext, period, square, coords_lookup):
 
 
 # Initialize variables
-ciphertext = "AGVQP HVNFP ATGVC QQPLR CSKHN ATCMK GHGFQ EUGBX UGNNG"
+ciphertext = "PVPVX BQAZE SBLDY SNAAP SIIEO PNOYQ TNOSU KAAWW TNGKX VEPBD UBAXH TSSKH HKMDZ NPPED SRINV PSHVC SHIQG PBGVD VSHCI SFILO NVWHZ NHQZG NSOPD HSOEI STOBA SINVE "
 ciphertext = ciphertext.replace(" ", "")
-key = "vanduo"
+key = "siena"
 bifid_alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'
 
 # Prepare the Bifid square and lookup
