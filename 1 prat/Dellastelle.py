@@ -33,7 +33,9 @@ def bifid_decrypt(ciphertext, period, square, coords_lookup):
 
 
 # Initialize variables
-ciphertext = "PVPVX BQAZE SBLDY SNAAP SIIEO PNOYQ TNOSU KAAWW TNGKX VEPBD UBAXH TSSKH HKMDZ NPPED SRINV PSHVC SHIQG PBGVD VSHCI SFILO NVWHZ NHQZG NSOPD HSOEI STOBA SINVE "
+ciphertext = ("PVPVX BQAZE SBLDY SNAAP SIIEO PNOYQ TNOSU KAAWW TNGKX VEPBD UBAXH TSSKH HKMDZ NPPED SRINV PSHVC SHIQG "
+              "PBGVD VSHCI SFILO NVWHZ NHQZG NSOPD HSOEI STOBA SINVE ").replace('\n', ' ').strip()
+
 ciphertext = ciphertext.replace(" ", "")
 key = "siena"
 bifid_alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'
