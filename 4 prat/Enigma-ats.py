@@ -46,16 +46,4 @@ def theEnigma(key1, key2, L1, L2, s, ciphertext):
     return output
 
 
-print(theEnigma(key1, key2, L_1, L_2, s, txt))
-
-
-
-# 3
-# GILTI NEPAK ELENU OSTAL OGALV
-# KOKIS TEBUK LABUT UPAZA DEJES
-# ASARO SSUZV ILGOJ AIAKY SEULE
-# NSPYG ELISI SVYDE SGILT INEVE
-# RKIAN TSUKR ESTAS PRABI LOTYL
-# IUIRR AMINA MUBAL SUZVE LGDAM
-# ASIGE LESAU GANCI ASANT PALAN
-# GES
+print(theEnigma(key1, key2, L_1, L_2, s, txt).replace(' ', '').replace('\n', ''))
