@@ -1,4 +1,4 @@
-abc = u'AĄBCČDEĘĖFGHIĮYJKLMNOPRSŠTUŲŪVZŽ'
+abc = u'AĄBCČDEĘeFGHIĮYJKLMNOPRSŠTUŲŪVZŽ'
 n = len(abc)
 
 
