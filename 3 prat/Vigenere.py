@@ -36,6 +36,20 @@ def prepare(text):
     return textn.upper()
 
 
+def Vigenere(text, key):  # Vigenere cipher
+    textn = prepare(text)
+    keyn = prepare(key)
+    textc = u""
+    keys = []
+    lk = len(keyn)
+    for i in range(0, lk):
+        keys.append(abc.index(keyn[i]))
+    lt = len(textn)
+    for i in range(0, lt):
+        textc += abc[(abc.index(textn[i]) + keys[i % lk]) % n]
+    return textc
+
+
 def split(text, d):
     textn = prepare(text)
     tspl = [''] * d
@@ -68,6 +82,7 @@ def guess(test, k, sifr):  # test - dažniausių raidžių eilutė, k - spėjama
     return 1. * s / kiek
 
 
+# Given cipher text
 cipher_text = (
     u'''
     YIŠSŽ CČŠVF YĮVLU JELĖY ARYKH 
@@ -81,49 +96,18 @@ cipher_text = (
     AFORC AKNLR VĖŪĄF SHTŽT ĮVLŠZ 
     FESVŠ ZFAOS BČĮNŠ KAHEŪ LYIAŲ 
     AGDBN KČĮZH ŽDJSĖ CTTOK MYIML 
-    LEBEM ULĄIH MUCČM NHUGD ZE  
-''')
-def decrypt(ciphertext, key):
-    decrypted_text = ''
-    for i in range(len(ciphertext)):
-        char = ciphertext[i]
-        if char in abc:
-            new_index = (abc.index(char) - abc.index(key[i % len(key)])) % len(abc)
-            decrypted_text += abc[new_index]
-        else:
-            decrypted_text += char
-    return decrypted_text
+    LEBEM ULĄIH MUCČM NHUGD ZE
+    '''
+)
 
+freq_output = freq(cipher_text)
+print(freq_output)
 
-# Known plaintext and its position
-known_plaintext = 'LIE'
-position = 0
-counter = 0
-# Try all possible keys of length 6
-for i in range(len(abc)):
-    for j in range(len(abc)):
-        for k in range(len(abc)):
-            for l in range(len(abc)):
-                for m in range(len(abc)):
-                    for n in range(len(abc)):
-                        counter += 1
-                        if counter % 10000 == 0:
-                            print(f"Keys tried: {counter}")
-                        key = abc[i] + abc[j] + abc[k] + abc[l] + abc[m] + abc[n]
-                        decrypted_text = decrypt(cipher_text, key)
-                        if decrypted_text[position:position + len(known_plaintext)] == known_plaintext:
-                            print(f"Possible key: {key}")
-                            print(f"Decrypted text: {decrypted_text}\n")
+f = split(cipher_text, 6)
+print(f[0], f[1])
 
+key_guess = guess(f[0], 6, cipher_text)
+print(key_guess)
 
-# freq_output = freq(cipher_text)
-# print(freq_output)
-#
-# f = split(cipher_text, 6)
-# print(f[0], f[1])
-#
-# key_guess = guess(f[1], 6, cipher_text)
-# print(key_guess)
-#
-# res = friedm(cipher_text, 6)
-# print(res)
+res = friedm(cipher_text, 6)
+print(res)
