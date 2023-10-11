@@ -1,6 +1,5 @@
 import Feistel as f
 
-# Given code and definitions
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 ciphertext = [[164, 164], [168, 167], [184, 187], [166, 170], [161, 187], [173, 162], [166, 189], [173, 174],
               [171, 164], [186, 190], [172, 174], [191, 191], [167, 170], [173, 170], [161, 181], [160, 168],
@@ -16,7 +15,6 @@ def convert_to_alphabet(text, alphabet):
         position = ord(char) % len(alphabet)
         converted_text += alphabet[position]
     return converted_text
-
 
 
 brute_force_results_feistel = {}
