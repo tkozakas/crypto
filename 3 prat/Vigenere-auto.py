@@ -44,7 +44,7 @@ OŽĖCV ĮJOŪŠ FNDAŪ MABŽO NHENĘ
 HŽCSŲ AŽOOV ŠEMĖG LVOSĖ ŪDOČS 
 ĮITET ĮNCĮŪ DĮŽAN ĖPTŽP NTPDJ 
 CŠTĘL BSYHĘ BYŠBĄ ŲDUYM ŲILUL 
-ZGĮ   
+ZGĮ  
 '''
 
 print(Vigenere(text, u'LIESAS'))
