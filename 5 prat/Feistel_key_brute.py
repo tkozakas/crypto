@@ -35,45 +35,5 @@ for potential_key1 in range(0, 256):
         if not any(sym in decrypted for sym in unwanted_symbols):
             brute_force_results_feistel[(potential_key1, potential_key2)] = decrypted.upper()
 
-
-common_lithuanian_words = {
-    'AKMUO', 'AKYS', 'ALGIRDAS', 'ANDRIUS', 'ANČIEN', 'APACIA', 'AR', 'ARBA', 'ATEITI', 'ATOSTOGOS',
-    'ATSILIEPIMAS', 'AUKSTAI', 'AUTOMOBILIS', 'AVALYNE', 'BALDAI', 'BALDŲ', 'BALTA', 'BE', 'BET',
-    'BLOGAS', 'BROLIS', 'DABAR', 'DAKTARAS', 'DAR', 'DARBO', 'DARBUOTOJAI', 'DAUG', 'DAVYDAS', 'DEBESYS',
-    'DIDELES', 'DIENA', 'DOKUMENTAS', 'DOMAS', 'DRABUZIAI', 'DRAUGAS', 'DRAUGE', 'DEL', 'DUTERE', 'EIS',
-    'EITI', 'EZERAS', 'GALAS', 'GALIMA', 'GALIMYBE', 'GALVA', 'GELTONA', 'GERAS', 'GERTI', 'GIEDRIUS',
-    'GIMIMO', 'GREITAI', 'GROZIS', 'GRUNTAS', 'GELE', 'GELES', 'IESKOTI', 'IR', 'ISEITI', 'JI', 'JIE',
-    'JIEMS', 'JIS', 'JO', 'JONAS', 'JUODA', 'JUS', 'KADA', 'KAIMAS', 'KAIP', 'KALBA', 'KALNAS', 'KAMBARYS',
-    'KAVINE', 'KAZKAS', 'KELIONE', 'KINAS', 'KLAUSIMAS', 'KNYGA', 'KODEL', 'KOMPANIJA', 'KOMPIUTERIAI',
-    'KOMPIUTERINIS', 'KOMPIUTERIS', 'KONCERTAS', 'KORIDORIUS', 'KUR', 'KURIS', 'KĄ', 'LAIKAS', 'LAIKRODIS',
-    'LAIPTAI', 'LAUKAS', 'LIETUS', 'LIETUVA', 'LINA', 'LINKSMAS', 'LIUDNAS', 'LOVA', 'LETAI', 'MAISTAS',
-    'MAISTO', 'MAMA', 'MARIJA', 'MARKE', 'MARTYNAS', 'MAZAI', 'MAZOS', 'MEDIS', 'MEDZIAGA', 'MEILE',
-    'MELAS', 'MES', 'METALAS', 'MIEGAMASIS', 'MIEGOTI', 'MIESTAS', 'MIESTO', 'MOKSLAI', 'MOKSLAS',
-    'MOKYKLA', 'MOKYMO', 'MOKYTIS', 'MOKYTOJA', 'MOKYTOJAI', 'MOTERIS', 'MEGZTAS', 'MELYNA', 'MENUO',
-    'MUSŲ', 'NAMAS', 'NE', 'NEGALIMA', 'NIEKAS', 'NORVEGIJA', 'NUDINGOS', 'PARDUOTI', 'PARDUOTUVE', 'PAS',
-    'PASLAUGA', 'PAVADINIMAS', 'PASTAS', 'PER', 'PETRAS', 'PIETUS', 'PIEVA', 'PLANAS', 'PO', 'POILSIS',
-    'POKRANTIS', 'PRADZIA', 'PRAEITI', 'PRIES', 'PROBLEMOS', 'PUSRYCIAI', 'RAUDONA', 'RESTORANAS', 'RINKTI',
-    'RITA', 'RYTAS', 'RUBAS', 'SAKO', 'SAKE', 'SAPNAS', 'SARUNE', 'SAULE', 'SAVIVALDYBE', 'SEKMADIENIS',
-    'SENELIAI', 'SESA', 'SESUO', 'SKAITYMAS', 'SKAMBUTIS', 'SNIEGAS', 'SPALVA', 'SPAUSTI', 'SUKO',
-    'SUKTUVAS', 'SUNUS', 'SVEIKATOS', 'SVEIKINIMAS', 'TADA', 'TEATRAS', 'TELEFONAS', 'TIESA', 'TINKLAPIS',
-    'TU', 'TURETI', 'TETIS', 'UNIVERSITETAS', 'UPE', 'UZDUOTIS', 'UZUOTIS', 'VAIKAS', 'VAKARAS', 'VAKARIENE',
-    'VALGYTI', 'VALSTYBE', 'VANDUO', 'VAZIUOTI', 'VIESBUTIS', 'VILA', 'VIRTUVE', 'VIRSUS', 'VYRAS', 'VEJAS',
-    'VELAI', 'VESA', 'YRA', 'CIA', 'IEITI', 'ĮVYKIS', 'SALDYTUVAS', 'SALIS', 'SALTAS', 'SALTAUVIS',
-    'SALTIS', 'SEIMA', 'SESELIS', 'SILDYKLE', 'SILDYTI', 'SILTA', 'SOKIS', 'SVIETIMAS', 'ZAIBAS', 'ZAISLAI',
-    'ZAISTI', 'ZALIA', 'ZARA', 'ZEMAI', 'ZIEDAI', 'ZMONA', 'ZMONES', 'TAD', 'KAD', 'IR'}
-
-sentences_with_lithuanian_words = []
-# Iterate through the dictionary
-for key, value in brute_force_results_feistel.items():
-    words = ''.join(e for e in value if e.isalnum() or e.isspace()).split()
-    lithuanian_words = [word for word in words if word.upper() in common_lithuanian_words]
-    if lithuanian_words:
-        sentences_with_lithuanian_words.append((key, ' '.join(words)))
-
 for key, sentence in brute_force_results_feistel.items():
     print(f"Key: {key}, Decrypted Text: {sentence}")
-
-if sentences_with_lithuanian_words:
-    print("\nSentences containing Lithuanian words:")
-    for key, sentence in sentences_with_lithuanian_words:
-        print(f"Key: {key}, Decrypted Text: {sentence}")
