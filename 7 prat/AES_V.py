@@ -1,3 +1,5 @@
+import struct
+
 import numpy as np
 
 # Initialize Parameters
@@ -21,94 +23,154 @@ def det_mod(matrix, mod):
 
 
 def inverse_matrix(T, p):
-    det_t = int(round(np.linalg.det(T)))
-    inv_det_t = pow(det_t, -1, p)
-    sus_matrix = np.array(
-        [
-            [T[1][1], -T[0][1]],
-            [-T[1][0], T[0][0]],
-        ]
-    )
-    return (inv_det_t * sus_matrix) % p
+    det_t = (T[0][0] * T[1][1] - T[0][1] * T[1][0]) % p
+
+    if det_t == 0:
+        raise ValueError("Matrix is singular modulo p.")
+
+    inv_det_t = pow(int(det_t), -1, p)
+
+    adj_matrix = np.array([
+        [T[1][1], -T[0][1]],
+        [-T[1][0], T[0][0]]
+    ])
+    return (inv_det_t * adj_matrix) % p
 
 
-# Generate Subkeys from initial key K
+def egcd(a, b):
+    """Extended Euclidean Algorithm"""
+    if a == 0:
+        return b, 0, 1
+    else:
+        g, y, x = egcd(b % a, a)
+        return g, x - (b // a) * y, y
+
+
+def modinv(a, p):
+    """Modular Inverse using Extended Euclidean Algorithm"""
+    g, x, y = egcd(a, p)
+    if g != 1:
+        raise Exception('Modular inverse does not exist')
+    else:
+        return x % p
+
+
 def generate_subkey(K, a, b, p):
-    K00 = (K[1][1] + (a // K[0][0] + b)) % p
-    K01 = (K[0][1] + K00) % p
-    K10 = (K[1][0] + K00) % p
-    K11 = (K[1][1] + K00) % p
-    return [[K00, K01], [K10, K11]]
-
-
-subkeys = generate_subkey(K, a, b, p)
-print(subkeys)
+    K11 = (K[1][1] + (a // K[0][0] + b)) % p
+    K12 = (K[0][1] + K11) % p
+    K21 = (K[1][0] + K11) % p
+    K22 = (K[1][1] + K11) % p
+    return [[K11, K12], [K21, K22]]
 
 
 def I_layer_inv(matrix, a, b, p):
-    transformed_matrix = []
-    for row in matrix:
-        transformed_row = []
-        for m in row:
-            if m == 0:
-                m_prime = b
+    for i in range(2):
+        for j in range(2):
+            if matrix[i][j] == 0:
+                matrix[i][j] = b
             else:
-                m_prime = (a * (1 / m) + b) % p
-            transformed_row.append(m_prime)
-        transformed_matrix.append(transformed_row)
+                m_inv = modinv(matrix[i][j], p)
+                matrix[i][j] = (a * m_inv + b) % p
 
-    return transformed_matrix
+    return matrix
 
 
 def II_layer_inv(matrix):
     return [[matrix[0][0], matrix[0][1]], [matrix[1][1], matrix[1][0]]]
 
 
-def III_layer_inv(matrix, T, i):
+def III_layer_inv(matrix, T_inv):
+    m_layer3 = []
+    for i in range(2):
+        m1_i = T_inv[0][0] * matrix[0][i] + T_inv[0][1] * matrix[1][i]
+        m2_i = T_inv[1][0] * matrix[0][i] + T_inv[1][1] * matrix[1][i]
+        m_layer3.append([m1_i, m2_i])
+    return m_layer3
 
 
+def IV_layer_inv(matrix, key):
+    m11 = (matrix[0][0] - key[0][0]) % p
+    m12 = (matrix[0][1] - key[0][1]) % p
+    m21 = (matrix[1][0] - key[1][0]) % p
+    m22 = (matrix[1][1] - key[1][1]) % p
 
-def IV_layer_inv(matrix, key, i):
-    m11_new = (matrix[0][0] ** 3 + key[0][0] ** i) % p
-    m12_new = (matrix[0][1] ** 3 + key[0][1] ** i) % p
-    m21_new = (matrix[1][0] ** 3 + key[1][0] ** i) % p
-    m22_new = (matrix[1][1] ** 3 + key[1][1] ** i) % p
-
-    return [[m11_new, m12_new], [m21_new, m22_new]]
+    matrix = [[m11, m12], [m21, m22]]
+    return matrix
 
 
-def decrypt_block(cipher_block, subkeys, T, i):
-    m11 = T_inv[0][0]
-    # IV layer inverse
-    m = IV_layer_inv(cipher_block, subkeys, i)
+def decrypt_block(cipher_block, subkeys):
+    T_inv = inverse_matrix(T, p)
+    for key in subkeys:
+        # IV layer inverse
+        m4 = IV_layer_inv(cipher_block, key)
     # III layer inverse
-    m = III_layer_inv(m, T, i)
+    m3 = III_layer_inv(m4, T_inv)
     # II layer inverse
-    m = II_layer_inv(m)
+    m2 = II_layer_inv(m3)
     # I layer inverse
-    m = I_layer_inv(m, a, b, p)
-    return m
+    m1 = I_layer_inv(m2, a, b, p)
+
+    return m1
 
 
-def decrypt(cipher_text, subkeys, T_inv):
+def decrypt(cipher_text, subkeys):
     decrypted_text = []
-    for i, cipher_block in enumerate(cipher_text):
-        m_block = decrypt_block(np.array(cipher_block).reshape(2, 2), subkeys, T, i)
+    for cipher_block in cipher_text:
+        m_block = decrypt_block(np.array(cipher_block).reshape(2, 2), subkeys)
         decrypted_text.append(m_block)
     return decrypted_text
 
 
-# Calculate inverse modulo p
-def inverse_mod(num, mod):
-    for i in range(1, mod):
-        if (num * i) % mod == 1:
-            return i
-    return -1
+# Generate all subkeys first
+K1 = K
+K2 = generate_subkey(K1, a, b, p)
+K3 = generate_subkey(K2, a, b, p)
+keys = [K1, K2, K3]
+keys = [[k_elem[::-1] for k_elem in k] for k in keys]
 
-
-# Calculating Inverse of T
-T_inv = inverse_matrix(T, p)
 
 # Decrypting the cipher text
-decrypted_blocks = decrypt(C, subkeys, T_inv)
+decrypted_blocks = decrypt(C, keys)
 print(decrypted_blocks)
+
+# Convert the numbers to bytes
+byte_data = b''.join(struct.pack('>H', num) for sublist in decrypted_blocks for pair in sublist for num in pair)
+
+# Decode the bytes to get the string
+# Assuming UTF-8 encoding, but you might need to adjust based on the actual encoding
+text = byte_data.decode('utf-8', 'ignore')
+print(text)
+
+
+def encrypt_block(plain_block, subkeys):
+    for key in subkeys:
+        # I layer
+        m1 = I_layer_inv(plain_block, a, b, p)
+        # II layer
+        m2 = II_layer_inv(m1)
+        # III layer
+        m3 = III_layer_inv(m2, T)
+        # IV layer
+        m4 = IV_layer_inv(m3, key)
+
+    return m4
+
+
+def encrypt(plain_text, subkeys):
+    encrypted_text = []
+    for plain_block in plain_text:
+        c_block = encrypt_block(np.array(plain_block).reshape(2, 2), subkeys)
+        encrypted_text.append(c_block)
+    return encrypted_text
+
+
+# Assuming the plain text blocks are the same as the C list for demonstration purposes
+plain_blocks = C
+
+# Encrypt the plain text blocks
+encrypted_blocks = encrypt(plain_blocks, keys)
+print("Encrypted blocks:", encrypted_blocks)
+
+# Decrypt the cipher text blocks
+decrypted_blocks = decrypt(encrypted_blocks, keys)
+print("Decrypted blocks:", decrypted_blocks)
