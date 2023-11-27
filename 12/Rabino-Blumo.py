@@ -96,7 +96,7 @@ M = [0] * t
 for i in range(1, t + 1):
     X[i] = (X[i - 1] ^ 2) % n
     p_i = bin(X[i] & int(xorBits, 2))
-    M[i - 1] = int(c[i - 1]) ^^ int(p_i, 2)
+    M[i - 1] = int(c[i - 1]) ^ int(p_i, 2)
 
 decrypted = ""
 for x in range(len(M)):
