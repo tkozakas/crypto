@@ -20,18 +20,25 @@ def bifid_decrypt(ciphertext, period, square, coords_lookup):
     plaintext = ""
     for i in range(0, len(ciphertext), period):
         chunk = ciphertext[i:i + period]
+        chunk_len = len(chunk)
+        if chunk_len == 0:
+            break
+
         coordinates = [coords_lookup[char] for char in chunk]
-        rows = [coord[0] for coord in coordinates]
-        cols = [coord[1] for coord in coordinates]
-        combined_coords = rows + cols
-        pairs = []
-        for j in range(0, len(combined_coords), 2):
-            pairs.append((combined_coords[j], combined_coords[j+1]))
-        plaintext += "".join([square[pair] for pair in pairs])
+
+        numbers = []
+        for r, c in coordinates:
+            numbers.extend([r, c])
+
+        rows = numbers[:chunk_len]
+        cols = numbers[chunk_len:]
+
+        for j in range(chunk_len):
+            plaintext += square[(rows[j], cols[j])]
+
     return plaintext
 
-
-ciphertext = "HKCXV YUDLL RKCKF LGMIR CNYMT RKHCT NTZAB TPCF"
+ciphertext = "HKCXV YUDLL RKCKF LGMIR CNYMT RKHCT NTZAB TPCFV"
 ciphertext = ciphertext.replace(" ", "")
 key = "TRAVEL"
 period = 5

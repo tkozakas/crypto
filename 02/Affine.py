@@ -1,9 +1,9 @@
 from math import gcd
 
-ciphertext = "EHČHŪ ĄŠHCĮ CSHŠH ĘHIHČ UDTŽI CČĘEC ĮCSĄS BMEHČ DTYĘČ ĘSCIC ĘYHFU MEFHZ TCZRS ĘHYĘY HFSCS RČUFV DSBMU EHTUH ŠZĘĮH SĘZUH SZĘVĘ TĘUŽI OČĮFU ĘČĮĘU ĄUHŪĮ CPKHT ŠFUEH ČMYĘČ ĘDBRU CSRSC SČHJU HSTKI KĄTĘ"
+ciphertext = "UBGLZ WUSFU WONPB SNNBG RSEVL BWISB SFSPE PTWLP FSGQ"
 text_start = ""  # leave empty if needed
 
-abc = u'AĄBCČDEĘĖFGHIĮYJKLMNOPRSŠTUŲŪVZŽ'
+abc = u'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 n = len(abc)
 
 
@@ -56,7 +56,7 @@ def brute_force_affine_to_find_start(ciphertext, desired_start):
     - The decrypted text, a, and b values if found. Otherwise, None.
     """
     results = []
-    possible_a_values = coprime_list(34)
+    possible_a_values = coprime_list(n)
     for a in possible_a_values:
         for b in range(n):
             decrypted_text = affine_cipher(ciphertext, a, b, mode="decrypt")
