@@ -1,12 +1,10 @@
 function = lambda m, k: (m | k) ^ ((k // 16) & m)
-key = [132, 235, 165]
-ciphertext = [[42, 164], [56, 167], [43, 170], [42, 188], [45, 164], [37, 178], [48, 175], [37, 162], [36, 170],
-              [36, 180], [43, 166], [32, 167], [38, 184], [41, 172], [43, 168], [35, 174], [54, 171], [33, 162],
-              [32, 176], [40, 175], [46, 168], [45, 170], [63, 165], [59, 162], [52, 190], [44, 169], [38, 188],
-              [40, 167], [51, 170], [59, 162], [35, 176], [56, 161], [37, 162], [33, 191], [50, 175], [47, 168],
-              [49, 177], [42, 191], [59, 178], [58, 164], [45, 168], [55, 170], [40, 167], [42, 184], [49, 174],
-              [38, 173], [33, 166], [51, 170], [59, 162], [35, 184], [36, 180], [46, 164], [32, 186], [51, 187],
-              [51, 170], [52, 190], [59, 162], [34, 184], [36, 162], [61, 166]]
+key = [169, 120, 168]
+ciphertext = [[15, 189], [21, 173], [10, 172], [26, 183], [13, 176], [31, 183], [12, 183], [26, 189], [29, 182], [23, 175], [24, 182],
+              [28, 185], [13, 188], [25, 161], [27, 170], [29, 185], [19, 177], [15, 177], [21, 180], [27, 185], [21, 180], [1, 183],
+              [13, 185], [23, 188], [24, 172], [22, 182], [27, 189], [27, 183], [20, 168], [20, 189], [12, 189], [1, 183], [12, 170],
+              [13, 170], [24, 182], [10, 190], [22, 170], [21, 185], [12, 177], [22, 182], [16, 182], [12, 183], [25, 181], [24, 170],
+              [27, 180], [29, 171], [12, 185], [12, 173], [28, 216]]
 
 
 class Feistel:
@@ -19,8 +17,7 @@ class Feistel:
                 f_out = function(right, k)
                 left = left ^ f_out
                 left, right = right, left
-
-            left, right = right, left  # last iteration does not need to be swapped, so swap back
+            left, right = right, left
             cipher.append([left, right])
         if returnText:
             return Feistel.blocksToString(cipher)
@@ -31,7 +28,7 @@ class Feistel:
     def decrypt(text, key, function, returnText=True):
         keyrev = key.copy()
         keyrev.reverse()
-        return Feistel.encrypt(text, keyrev, function, returnText)  # just reverse the key for decryption
+        return Feistel.encrypt(text, keyrev, function, returnText)
 
     @staticmethod
     def blocksToString(blocks):
