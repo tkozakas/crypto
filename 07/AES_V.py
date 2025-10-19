@@ -1,4 +1,3 @@
-# by artem tretjakov :)
 # https://sagecell.sagemath.org/?z=eJxNz-EKwiAQB_DvPsVBDBY7yNMiCHwCH0EkNjIaRpPpPuztuxZryX3xd6f-vYU72DBfU22xxW5_EcCrZ3TaGyMvEKXpFgzPHJZtbZ30Td0ePjNVarp9lbiWoUimjrKxjvyPFBMxqY00k2o-51caQ5nGF7goMRJGhVF7IW7feGs42MEwlTSVDOURIE9dDHOG-zBCX8LYln54ZVjus2T-__U1tRptuD5skdUqL5LRdBbcN6QR6CSscYQKNR450ZbmDePhUrk=&lang=sage&interacts=eJyLjgUAARUAuQ==
 def Key_p(K, a, b, p):
     if K[3] == 0:
