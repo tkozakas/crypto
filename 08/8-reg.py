@@ -1,64 +1,96 @@
-# by daniil samuilov
+import numpy as np
 
-code = [155, 101, 152, 184, 209, 8, 253, 182, 111, 239, 28, 140, 4, 61, 245, 205, 215, 185, 26, 79, 64, 150, 219, 120,
-        78, 230, 121, 32, 94, 58, 49, 154, 101, 152, 168, 195, 20, 251, 176, 107, 250, 26, 133, 8, 35, 232, 198, 195,
-        190, 6, 93, 68, 152, 204, 123, 69, 252, 105, 55, 86, 36, 44, 155, 122, 149, 189, 223, 25, 236, 175, 110, 254, 5,
-        143, 18, 37, 241, 201, 208, 169, 14, 84, 68, 137, 196, 123, 73, 244, 114, 39, 94, 63, 43, 152, 103, 154, 184,
-        215, 8, 250, 183, 97, 248, 26, 135, 20, 38, 232, 223, 214, 172, 3, 76, 78, 147, 203, 102, 68, 242, 117, 40, 67,
-        35, 54, 141, 103, 134, 165, 197, 18, 228, 166, 116, 238, 24, 135, 8, 38, 238, 222, 201, 161, 22, 74, 83, 147,
-        205, 115, 88, 229, 125, 55, 94, 36, 61, 154, 107, 135, 184, 195, 28, 255, 182, 106, 238, 7, 147, 19, 34, 242,
-        222, 199, 170, 6, 87, 76, 155, 202, 97, 66, 249, 115, 55, 94, 43, 49, 154, 103, 153, 176, 215, 17, 230, 176,
-        116, 242, 29, 131, 21, 63, 244, 206, 195, 191, 21, 93, 68, 157, 215, 126, 95, 252, 114, 33, 94, 57, 57, 152,
-        111, 151, 184, 223, 14, 250, 183, 97, 242, 20, 135, 21, 55, 238, 220, 214, 191, 10, 87, 78, 147, 223, 118, 78,
-        249, 114, 49, 71, 47, 42, 155, 122, 149, 189, 223, 22, 251, 162, 115, 239, 18, 141, 0, 50, 236, 205, 215, 161,
-        6, 76, 78, 155, 215, 124, 78, 247, 121, 45, 68, 57, 49, 132, 111, 157, 186, 223, 14, 252, 168, 105, 249, 22,
-        143, 18, 58, 230, 199, 209, 185, 0, 80, 86, 155, 210, 123, 88, 229, 125, 62, 78, 56, 57, 129, 124, 135, 164,
-        195, 20, 228, 162, 105, 232, 28, 149, 20, 37, 238, 200, 195, 175, 29, 76]
+code = [93, 238, 181, 138, 154, 213, 188, 5, 165, 252, 236, 220, 19, 250, 98, 46, 122, 41, 83, 9, 213, 129, 231, 121, 244, 48, 173, 186,
+        130, 127, 168, 186, 109, 20, 175, 196, 198]
 
-# PR
-print(ord('S'))
-print(ord('K'))
+known_plaintext = "OF"
 
 
-def shift(c, x1):  # c - coefficients, x - initial state, len(c)=len(x)
+def shift(c, x1):
     bt = 0
-
     n = len(x1)
     x = [0] * n
     for j in range(0, n):
         bt += c[j] * x1[j]
     for j in range(1, n):
-        x[n - j] = x1[n - 1 - j]
+        x[j] = x1[j - 1]
     x[0] = bt % 2
     return x
 
 
 def key(c, x, n):
-    rk = str(x[0])
-    for i in range(n - 1):
+    rk_bits = []
+    for i in range(n):
+        rk_bits.append(x[0])
         x = shift(c, x)
-        rk += str(x[0])
-    return rk
-
-
-c = [0, 1, 1, 0, 0, 1, 0, 0]
-x0 = [1, 0, 0, 0, 1, 1, 0, 0]
+    return rk_bits
 
 
 def enc(t, c, x):
     n = len(t)
-    rakt = key(c, x, 8 * n)
-    c = []
-    for i in range(0, n):
-        rb = rakt[i * 8:(i + 1) * 8]
-        rs = int(rb, 2)
-        c.append(t[i] ^ rs)
-    return c
+    keystream_bits = key(c, x, 8 * n)
+    decrypted_bytes = []
+    for i in range(n):
+        byte_keystream_bits = keystream_bits[i * 8:(i + 1) * 8]
+        keystream_byte_val = int("".join(map(str, byte_keystream_bits)), 2)
+        decrypted_bytes.append(t[i] ^ keystream_byte_val)
+    return decrypted_bytes
 
 
-testff = enc(code, c, x0)
-text = ""
-for i in range(len(testff)):
-    text += chr(testff[i])
+def solve_linear_system(A, b):
+    try:
+        A_inv = np.linalg.inv(A)
+        A_inv = (np.round(A_inv)).astype(int) % 2
+        x = np.dot(A_inv, b) % 2
+        return list(x)
+    except np.linalg.LinAlgError:
+        print("Error: The matrix is singular. Cannot solve the system.")
+        return None
 
-print(text)
+
+def find_lfsr_params(known_plaintext, ciphertext):
+    pt_bytes = [ord(p) for p in known_plaintext]
+    ct_bytes = ciphertext[:len(pt_bytes)]
+    keystream_bytes = [p ^ c for p, c in zip(pt_bytes, ct_bytes)]
+    keystream_bits = []
+    for byte in keystream_bytes:
+        keystream_bits.extend([int(bit) for bit in f'{byte:08b}'])
+
+    print(f"Recovered first {len(keystream_bits)} keystream bits: {''.join(map(str, keystream_bits))}")
+
+    L = 8
+    A = []
+    b = []
+    for i in range(L):
+        A.append(list(reversed(keystream_bits[i:i + L])))
+        b.append(keystream_bits[i + L])
+
+    A_matrix = np.array(A)
+    b_vector = np.array(b)
+
+    c_found = solve_linear_system(A_matrix, b_vector)
+
+    if c_found is None:
+        return None, None
+
+    print(f"Found c = {c_found}")
+
+    for i in range(256):
+        x0_candidate = [int(bit) for bit in f'{i:08b}']
+        test_keystream = key(c_found, x0_candidate, len(keystream_bits))
+
+        if test_keystream == keystream_bits:
+            x0_found = x0_candidate
+            print(f"Found x0 = {x0_found}")
+            return c_found, x0_found
+
+    return c_found, None
+
+
+if __name__ == "__main__":
+    c_final, x0_final = find_lfsr_params(known_plaintext, code)
+
+    if c_final and x0_final:
+        decrypted_code = enc(code, c_final, x0_final)
+        plaintext = "".join([chr(b) for b in decrypted_code])
+        print(f"\nDecrypted Plaintext:\n{plaintext}")
