@@ -1,22 +1,25 @@
 from math import gcd
 
-v1 = 81065661547
-p = 96425213419
-w1 = 11987976261
-C = [60745877538, 17643778756, 31549010127, 2621429432, 31549010127, 76999285834, 74651108909, 33897187052, 90031265371, 7647628245, 60745877538, 18001585894, 46929166589, 90031265371]
-
-
-##########
-# Step 1
-##########
-
-# Calculate the GCD to find out if we need to adjust v1, w1, and p
-gcd_value = gcd(v1, p)
-print(gcd_value)
-
+# --- Provided values ---
+v1 = 20176917094
+p = 196299717268
+w1 = 14161281118
+V = [20176917094, 43017251388, 148335234986, 10070431054, 158867258548, 84641041942, 161989297456, 58406967673]
+C = [437982825772, 408626712595, 434860786864, 434860786864, 334400495989, 275993528316, 148335234986, 506460224499, 408626712595, 286063959370, 350219744922, 148335234986, 286063959370, 350219744922, 334400495989, 148335234986, 363412214884, 334400495989, 353341783830, 334400495989, 434860786864, 421819182557]
 
 ##########
-# Step 2
+# Step 1: Handle the non-coprime case
+##########
+g = gcd(v1, p)
+print(f"GCD(v1, p) = {g}")
+
+# Scale down the numbers to work in a space where the modular inverse exists
+v1n = v1 // g
+w1n = w1 // g
+pn = p // g
+
+##########
+# Step 2: Calculate the secret multiplier 's'
 ##########
 def modinv(a, m):
     def egcd(a, b):
@@ -32,21 +35,36 @@ def modinv(a, m):
     else:
         return x % m
 
-
-# Calculate the scale factor s
-s = modinv(v1, p) * w1 % p
-print(s)
-
-##########
-# Step 3
-##########
-cn = [(c * s) % p for c in C]
-print(cn)
+# Find the modular inverse in the scaled-down space
+v1n_inv = modinv(v1n, pn)
+s = (w1n * v1n_inv) % pn
+print(f"Secret multiplier s = {s}")
 
 ##########
-# Step 4
+# Step 3: Recover the private key and scale the ciphertext
 ##########
-ascii_characters = [chr(int(bin(c)[-18:-10], 2)) for c in cn]
-print(ascii_characters)
+W = [(val * s) % p for val in V]
+Cn = [(val * s) % p for val in C]
 
+print(f"Recovered private key W = {W}")
+print(f"Scaled ciphertext Cn = {Cn}")
 
+##########
+# Step 4: Extract the hidden message from the specified bits
+##########
+message = ""
+for val in Cn:
+    # Convert the number to a binary string, removing the '0b' prefix
+    binary_val = bin(val)[2:]
+    
+    # Pad with leading zeros to ensure it's at least 19 bits long
+    padded_binary = binary_val.zfill(19)
+    
+    # Extract the 8 bits from the 12th to 19th position from the end
+    # This corresponds to the slice [-19:-11]
+    message_bits = padded_binary[-19:-11]
+    
+    # Convert the 8 bits to an integer, then to an ASCII character
+    message += chr(int(message_bits, 2))
+
+print(f"Decrypted message: {message}")
