@@ -45,7 +45,7 @@ def clock():
         R2 = ((R2 >> 1) & R2_MASK) | (t << 21)
     if ((R3 & R3_CLOCK_BIT) != 0) == maj:
         t = bin(R3 & R3_TAPS).count('1') % 2
-        R3 = ((R3 >> 1) & R3_MASK) | (t << 22)
+        R3 = ((R3 >> 1g) & R3_MASK) | (t << 22)
 
 
 def keysetup(key, frame):
