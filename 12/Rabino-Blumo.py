@@ -1,36 +1,23 @@
-### 12.1
 # use https://sagecell.sagemath.org/
-"""
- 15 užduotis
-1. Rabin kriptosistemos privatusis raktas [p,q]=  [26623333280885244011, 26623333280885244047].
-Iššifruokite  šifrą
-409305196723890912810290354005744475541. Tekstas keičiamas skaičiumi kaip RSA užduotyje.
-"""
-
-p = 26623333280885244011
-q = 26623333280885244047
+### 12.1
+# Rabin cryptosystem decryption
+p = 7588748953220563890867587
+q = 7588748953220563890867991
 n = p * q
-
-c = 409305196723890912810290354005744475541
-
+c = 45928015850449628491166953201561651272471678808679
 # Extended euclidean algorithm
 # (y_p * p + y_q * q) = 1
-# https://www.dcode.fr/extended-gcd
-y_p = -739537035580145668
-y_q = 739537035580145667
-
+# Calculated using https://www.dcode.fr/extended-gcd
+y_p = -2798820777301643613216165
+y_q = 2798820777301643613216016
 m_p = power_mod(c, (p + 1) / 4, p)
 m_q = power_mod(c, (q + 1) / 4, q)
-
 r1 = ((y_p * p * m_q) + (y_q * q * m_p)) % n
 r2 = n - r1
 r3 = ((y_p * p * m_q) - (y_q * q * m_p)) % n
 r4 = n - r3
-
-# Destytojo kodas
+# Convert to text
 A = 'abcdefghijklmnopqrstuvwxyz'
-
-
 def i_teksta(M):
     n = M
     text = ''
@@ -44,13 +31,11 @@ def i_teksta(M):
             text += '?'
             n = (n - ind + 1) // 100
     return text[::-1]
-
-
 print(i_teksta(r1))
 print(i_teksta(r2))
 print(i_teksta(r3))
 print(i_teksta(r4))
-# smagus?darbas
+# wrinkled?in?deep?thought
 
 ### 12.2
 
@@ -62,45 +47,63 @@ Iššifruokite šifrą
 Raidės keičiamos ASCII kodais. 
 """
 
-p = 67807
-q = 67819
+p = 68659
+q = 68683
 n = p * q
 
 h = 8
 
-c = [178, 202, 247, 151, 157, 249, 254, 35, 95, 23, 112, 42, 16, 227, 246, 11]
-x = 1042529926
+c = [88, 56, 96, 28, 129, 123, 106, 222, 97, 81, 230, 253, 24, 241, 253, 85, 18, 79, 73, 169, 71, 82, 24, 108, 27, 165, 166, 39]
+x = 773789567
 t = len(c)
 
-d_p = ((p + 1) / 4) ^ (t + 1) % (p - 1)
-d_q = ((q + 1) / 4) ^ (t + 1) % (q - 1)
+# Calculate the extended GCD coefficients
+def extended_gcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    gcd, x1, y1 = extended_gcd(b % a, a)
+    x = y1 - (b // a) * x1
+    y = x1
+    return gcd, x, y
 
-u_p = x ^ d_p % p
-u_q = x ^ d_q % q
+gcd, r_p, r_q = extended_gcd(p, q)
+print(f"r_p = {r_p}, r_q = {r_q}")
 
-# Extended euclidean algorithm
-# r_p * p + r_q * q = 1
-# https://www.dcode.fr/extended-gcd
-r_p = -28258
-r_q = 28253
+# For Blum-Goldwasser: compute x_0 from x_t
+a = (p + 1) // 4
+b = (q + 1) // 4
+d_p = int(power_mod(a, t + 1, p - 1))
+d_q = int(power_mod(b, t + 1, q - 1))
+
+print(f"d_p = {d_p}, d_q = {d_q}")
+
+u_p = power_mod(x, d_p, p)
+u_q = power_mod(x, d_q, q)
+
+print(f"u_p = {u_p}, u_q = {u_q}")
 
 x_0 = (u_q * r_p * p + u_p * r_q * q) % n
+
+print(f"x_0 = {x_0}")
 
 X = [0] * (t + 1)
 X[0] = x_0
 
-xorBits = "0b" + "1" * h
-
 M = [0] * t
 
 for i in range(1, t + 1):
-    X[i] = (X[i - 1] ^ 2) % n
-    p_i = bin(X[i] & int(xorBits, 2))
-    M[i - 1] = int(c[i - 1]) ^ int(p_i, 2)
+    X[i] = power_mod(X[i - 1], 2, n)
+    p_i = X[i] % (2^h)  # Take the least significant h bits
+    M[i - 1] = c[i - 1] ^^ p_i
+    
+print(f"M values: {M}")
 
 decrypted = ""
-for x in range(len(M)):
-    decrypted += chr(M[x])
+for j in range(len(M)):
+    if 0 <= M[j] <= 127:  # Valid ASCII range
+        decrypted += chr(M[j])
+    else:
+        decrypted += f"[{M[j]}]"
 
 print(decrypted)
-# rupesciai baigti
+# not a rebel barred their way
